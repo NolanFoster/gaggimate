@@ -17,7 +17,12 @@ constexpr size_t UPDATE_CHECK_INTERVAL = 30 * 60 * 1000;
 constexpr size_t DNS_PERIOD = 50;
 
 const String LOCAL_URL = "http://4.4.4.1/";
-const String RELEASE_URL = "https://github.com/jniebuhr/gaggimate/releases/";
+// GitHub repository ("owner/name") whose releases OTA updates come from. Override at build time with
+// PLATFORMIO_BUILD_FLAGS='-DGAGGIMATE_RELEASE_REPO=\"jniebuhr/gaggimate\"' to follow upstream instead.
+#ifndef GAGGIMATE_RELEASE_REPO
+#define GAGGIMATE_RELEASE_REPO "NolanFoster/gaggimate"
+#endif
+const String RELEASE_URL = "https://github.com/" GAGGIMATE_RELEASE_REPO "/releases/";
 // Headless builds must pull their own release assets; the screen firmware would not boot on them.
 #ifdef GAGGIMATE_HEADLESS
 constexpr char OTA_DISPLAY_FIRMWARE[] = "display-headless-firmware.bin";

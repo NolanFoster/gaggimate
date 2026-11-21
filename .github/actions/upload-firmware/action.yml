@@ -50,6 +50,13 @@ runs:
       run: |
         set -euo pipefail
 
+        # Forks have no update server: skip the upload so the job goes on to publish the GitHub release,
+        # which is where devices built from a fork (GAGGIMATE_RELEASE_REPO) look for updates.
+        if [[ -z "${UPDATE_SERVER_HOST:-}" ]]; then
+          echo "::notice title=Update server upload skipped::UPDATE_SERVER_HOST is not set, so ${TARGET} firmware is not uploaded to an update server."
+          exit 0
+        fi
+
         version="$VERSION"
         if [[ -z "$version" ]]; then
           version=$(git describe --tags --dirty)

@@ -1,10 +1,11 @@
 import { signal } from '@preact/signals';
 import { appSettings } from './appSettings.js';
+import { RELEASE_REPO } from '../config/releaseRepo.js';
 
 // Web bundles are published next to the firmware: stable on the latest release, nightly on the nightly pre-release.
 const MANIFEST_URLS = {
-  stable: 'https://github.com/jniebuhr/gaggimate/releases/latest/download/app-web.json',
-  nightly: 'https://github.com/jniebuhr/gaggimate/releases/download/nightly/app-web.json',
+  stable: `https://github.com/${RELEASE_REPO}/releases/latest/download/app-web.json`,
+  nightly: `https://github.com/${RELEASE_REPO}/releases/download/nightly/app-web.json`,
 };
 const FAILED_KEY = 'gaggimate.failedBundle';
 
