@@ -5,7 +5,8 @@ export const PROFILE_IMAGE_SIZE = 300;
 export const ACCEPTED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/bmp'];
 
 const COLOR_FORMAT_TRUE_COLOR = 4;
-const HEADER = COLOR_FORMAT_TRUE_COLOR | (PROFILE_IMAGE_SIZE << 10) | (PROFILE_IMAGE_SIZE << 21);
+// LVGL image header for a square true-colour image; the same format serves the 480x480 standby background.
+const headerFor = size => COLOR_FORMAT_TRUE_COLOR | (size << 10) | (size << 21);
 
 const imageUrl = id => `/api/profiles/image?id=${encodeURIComponent(id)}`;
 
@@ -15,16 +16,16 @@ export async function isGif(blob, name = '') {
   return String.fromCharCode(...magic) === 'GIF8';
 }
 
-// Center-crop to a square and scale to 300x300.
-export async function drawToCanvas(blob) {
+// Center-crop to a square and scale to size x size (300x300 for profiles).
+export async function drawToCanvas(blob, size = PROFILE_IMAGE_SIZE) {
   const bitmap = await createImageBitmap(blob);
   const side = Math.min(bitmap.width, bitmap.height);
   const canvas = document.createElement('canvas');
-  canvas.width = PROFILE_IMAGE_SIZE;
-  canvas.height = PROFILE_IMAGE_SIZE;
+  canvas.width = size;
+  canvas.height = size;
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
+  ctx.fillRect(0, 0, size, size);
   ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(
     bitmap,
@@ -34,32 +35,30 @@ export async function drawToCanvas(blob) {
     side,
     0,
     0,
-    PROFILE_IMAGE_SIZE,
-    PROFILE_IMAGE_SIZE,
+    size,
+    size,
   );
   bitmap.close();
   return canvas;
 }
 
-export function canvasToDeviceImage(canvas) {
-  const px = canvas
-    .getContext('2d')
-    .getImageData(0, 0, PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE).data;
-  const out = new DataView(new ArrayBuffer(4 + PROFILE_IMAGE_SIZE * PROFILE_IMAGE_SIZE * 2));
-  out.setUint32(0, HEADER, true);
+export function canvasToDeviceImage(canvas, size = PROFILE_IMAGE_SIZE) {
+  const px = canvas.getContext('2d').getImageData(0, 0, size, size).data;
+  const out = new DataView(new ArrayBuffer(4 + size * size * 2));
+  out.setUint32(0, headerFor(size), true);
   for (let i = 0, o = 4; i < px.length; i += 4, o += 2) {
     out.setUint16(o, ((px[i] & 0xf8) << 8) | ((px[i + 1] & 0xfc) << 3) | (px[i + 2] >> 3), true);
   }
   return out.buffer;
 }
 
-export function deviceImageToCanvas(buffer) {
+export function deviceImageToCanvas(buffer, size = PROFILE_IMAGE_SIZE) {
   const view = new DataView(buffer);
   const canvas = document.createElement('canvas');
-  canvas.width = PROFILE_IMAGE_SIZE;
-  canvas.height = PROFILE_IMAGE_SIZE;
+  canvas.width = size;
+  canvas.height = size;
   const ctx = canvas.getContext('2d');
-  const image = ctx.createImageData(PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
+  const image = ctx.createImageData(size, size);
   for (let i = 0, o = 4; o + 1 < buffer.byteLength; i += 4, o += 2) {
     const v = view.getUint16(o, true);
     image.data[i] = (((v >> 11) & 0x1f) * 255) / 31;

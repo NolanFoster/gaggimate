@@ -8,6 +8,7 @@
 #include <display/core/MachineProfiles.h>
 #include <display/core/ProfileImage.h>
 #include <display/core/ProfileManager.h>
+#include <display/core/StandbyImage.h>
 #include <display/models/profile.h>
 #include <display/plugins/BLEScalePlugin.h>
 #include <display/plugins/ShotHistoryPlugin.h>
@@ -18,6 +19,7 @@
 #include <esp_heap_caps.h>
 #include <esp_partition.h>
 #include <mbedtls/platform.h>
+#include <utility>
 #include <vector>
 #include <version.h>
 
@@ -242,6 +244,14 @@ void WebUIPlugin::setupServer() {
         [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
             handleProfileImageBody(request, data, len, index, total);
         });
+    for (const auto &[route, asset] : {std::make_pair("/api/standby/image", StandbyAsset::Image),
+                                       std::make_pair("/api/standby/logo", StandbyAsset::Logo)}) {
+        server.on(
+            route, HTTP_ANY, [this, asset](AsyncWebServerRequest *request) { handleStandbyAsset(request, asset); }, nullptr,
+            [this, asset](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+                handleStandbyAssetBody(request, asset, data, len, index, total);
+            });
+    }
     // The web UI is embedded in firmware flash and served from the memory-mapped blob (see serveWebAsset). It is no
     // longer in LittleFS, so OTA never touches the partition holding profiles/shots. The catch-all onNotFound handles
     // every path not claimed by an explicit server.on()/api route above. [GM-106]
@@ -638,6 +648,14 @@ void WebUIPlugin::handleSettings(AsyncWebServerRequest *request) const {
                 settings->setStandbyBrightness(request->arg("standbyBrightness").toInt());
             if (request->hasArg("standbyBrightnessTimeout"))
                 settings->setStandbyBrightnessTimeout(request->arg("standbyBrightnessTimeout").toInt() * 1000);
+            if (request->hasArg("standbyClockStyle"))
+                settings->setStandbyClockStyle(request->arg("standbyClockStyle").toInt());
+            if (request->hasArg("standbyShowLogo"))
+                settings->setStandbyShowLogo(parseBoolArg(request->arg("standbyShowLogo")));
+            if (request->hasArg("standbyShowTemp"))
+                settings->setStandbyShowTemp(parseBoolArg(request->arg("standbyShowTemp")));
+            if (request->hasArg("standbyImageDim"))
+                settings->setStandbyImageDim(request->arg("standbyImageDim").toInt());
             if (request->hasArg("steamPumpPercentage"))
                 settings->setSteamPumpPercentage(request->arg("steamPumpPercentage").toFloat());
             if (request->hasArg("steamPumpCutoff"))
@@ -849,6 +867,12 @@ void WebUIPlugin::handleSettings(AsyncWebServerRequest *request) const {
     doc["mainBrightness"] = settings.getMainBrightness();
     doc["standbyBrightness"] = settings.getStandbyBrightness();
     doc["standbyBrightnessTimeout"] = settings.getStandbyBrightnessTimeout() / 1000;
+    doc["standbyClockStyle"] = settings.getStandbyClockStyle();
+    doc["standbyShowLogo"] = settings.isStandbyShowLogo();
+    doc["standbyShowTemp"] = settings.isStandbyShowTemp();
+    doc["standbyImageRev"] = settings.getStandbyImageRev();
+    doc["standbyImageDim"] = settings.getStandbyImageDim();
+    doc["standbyLogoRev"] = settings.getStandbyLogoRev();
     doc["steamPumpPercentage"] = settings.getSteamPumpPercentage();
     doc["steamPumpCutoff"] = settings.getSteamPumpCutoff();
     doc["themeMode"] = settings.getThemeMode();
@@ -1125,6 +1149,145 @@ void WebUIPlugin::handleProfileImage(AsyncWebServerRequest *request) {
             return;
         }
         pluginManager->trigger("profiles:image:change", "id", id);
+        request->send(200, "application/json", "{}");
+        return;
+    }
+    default:
+        request->send(405);
+    }
+}
+
+namespace {
+struct StandbyAssetFiles {
+    const char *path;
+    const char *tempPath;
+};
+
+StandbyAssetFiles standbyAssetFiles(StandbyAsset asset) {
+    if (asset == StandbyAsset::Logo)
+        return {standby_logo::PATH, standby_logo::TEMP_PATH};
+    return {standby_image::PATH, standby_image::TEMP_PATH};
+}
+
+// Checks the first body chunk (LVGL header) against the declared size; returns an error or "".
+String validateStandbyUpload(StandbyAsset asset, const uint8_t *data, size_t len, size_t total) {
+    if (len < sizeof(uint32_t))
+        return "Invalid image";
+    uint32_t header = 0;
+    memcpy(&header, data, sizeof(header));
+    if (asset == StandbyAsset::Logo) {
+        standby_logo::Header parsed;
+        return standby_logo::parseHeader(header, total, parsed) ? "" : "Logo must be at most 400x160";
+    }
+    if (total != standby_image::FILE_BYTES)
+        return "Image must be 480x480";
+    return header == standby_image::HEADER ? "" : "Invalid image header";
+}
+} // namespace
+
+void WebUIPlugin::onStandbyAssetChanged(StandbyAsset asset) {
+    controller->getSettings().batchUpdate([asset](Settings *settings) {
+        if (asset == StandbyAsset::Logo)
+            settings->bumpStandbyLogoRev();
+        else
+            settings->bumpStandbyImageRev();
+    });
+    controller->getSettings().save(true); // immediate, like the settings POST: the web preview keys its cache on it
+    pluginManager->trigger(asset == StandbyAsset::Logo ? "standby:logo:change" : "standby:image:change");
+}
+
+// Standby background and logo live on LittleFS (no SD card needed). An upload goes to a temp file first, so a failed
+// upload never leaves a half-written file; it only replaces the old one once complete.
+void WebUIPlugin::handleStandbyAssetBody(AsyncWebServerRequest *request, StandbyAsset asset, uint8_t *data, size_t len,
+                                         size_t index, size_t total) {
+    if (request->method() != HTTP_POST)
+        return;
+    StandbyUpload &upload = standbyUploads[static_cast<size_t>(asset)];
+    const StandbyAssetFiles files = standbyAssetFiles(asset);
+    if (index == 0) {
+        if (upload.file)
+            upload.file.close();
+        upload.request = request;
+        upload.error = controller->isUpdating() ? String("Update in progress") : validateStandbyUpload(asset, data, len, total);
+        if (upload.error.isEmpty()) {
+            LittleFS.remove(files.tempPath);
+            const size_t totalBytes = LittleFS.totalBytes();
+            const size_t usedBytes = LittleFS.usedBytes();
+            const size_t freeBytes = totalBytes > usedBytes ? totalBytes - usedBytes : 0;
+            const size_t needed = total + standby_image::RESERVE_BYTES;
+            if (freeBytes < needed) {
+                // Room for the new file only once the old one is gone: drop it first (a failed upload then
+                // leaves none, which is the stock look).
+                size_t oldBytes = 0;
+                if (File old = LittleFS.open(files.path, "r")) {
+                    oldBytes = old.size();
+                    old.close();
+                }
+                if (freeBytes + oldBytes >= needed)
+                    LittleFS.remove(files.path);
+                else
+                    upload.error = "Not enough free space on the display";
+            }
+        }
+        if (upload.error.isEmpty()) {
+            upload.file = LittleFS.open(files.tempPath, FILE_WRITE);
+            if (!upload.file)
+                upload.error = "Could not write image";
+        }
+    }
+    if (request != upload.request || !upload.error.isEmpty() || !upload.file)
+        return;
+    if (upload.file.write(data, len) != len) {
+        upload.error = "Could not write image";
+        upload.file.close();
+        LittleFS.remove(files.tempPath);
+        return;
+    }
+    if (index + len == total) {
+        upload.file.close();
+        LittleFS.remove(files.path);
+        if (!LittleFS.rename(files.tempPath, files.path)) {
+            upload.error = "Could not write image";
+            LittleFS.remove(files.tempPath);
+        }
+    }
+}
+
+void WebUIPlugin::handleStandbyAsset(AsyncWebServerRequest *request, StandbyAsset asset) {
+    if (controller->isUpdating()) {
+        request->send(503, "text/plain", "Update in progress");
+        return;
+    }
+    StandbyUpload &upload = standbyUploads[static_cast<size_t>(asset)];
+    const StandbyAssetFiles files = standbyAssetFiles(asset);
+    switch (request->method()) {
+    case HTTP_GET:
+        if (LittleFS.exists(files.path))
+            request->send(LittleFS, files.path, "application/octet-stream");
+        else
+            request->send(404, "text/plain", "No image");
+        return;
+    case HTTP_DELETE:
+        LittleFS.remove(files.path);
+        onStandbyAssetChanged(asset);
+        request->send(200, "application/json", "{}");
+        return;
+    case HTTP_POST: {
+        if (request != upload.request) {
+            request->send(400, "text/plain", "Invalid image");
+            return;
+        }
+        upload.request = nullptr;
+        if (upload.file) {
+            upload.file.close(); // body ended short of Content-Length
+            LittleFS.remove(files.tempPath);
+            upload.error = "Incomplete upload";
+        }
+        if (!upload.error.isEmpty()) {
+            request->send(400, "text/plain", upload.error);
+            return;
+        }
+        onStandbyAssetChanged(asset);
         request->send(200, "application/json", "{}");
         return;
     }

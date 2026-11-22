@@ -408,6 +408,7 @@ void DefaultUI::loop() {
         }
     }
 
+    standbyCustomizer.loop(currentScreen == SCREEN_ID_STANDBY_SCREEN);
     ui_tick();
     // EEZ owns visibility. Pulse only the selected Automagic icon while not ready.
     // Restore every other icon so a state change cannot leave it dimmed.
@@ -468,6 +469,7 @@ void DefaultUI::loopProfiles() {
         profileLoaded = 1;
     }
     loadRequestedImage();
+    standbyCustomizer.loadPending();
 }
 
 // SD reads stay on this task: a slow or failing card must not block rendering or overflow the UI task's stack.
@@ -708,6 +710,8 @@ void DefaultUI::collectMeters(lv_obj_t *obj) {
     const uint32_t n = lv_obj_get_child_cnt(obj);
     for (uint32_t i = 0; i < n; i++) {
         lv_obj_t *child = lv_obj_get_child(obj, i);
+        if (lv_obj_has_flag(child, LV_OBJ_FLAG_USER_1))
+            continue; // standby customization (analog clock), not a gauge
         if (gaugeCount < 4 && lv_obj_check_type(child, &lv_meter_class)) {
             gaugeMeters[gaugeCount++] = child;
         }

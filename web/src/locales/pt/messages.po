@@ -124,6 +124,10 @@ msgstr "{recentShotCount, plural, one {# extração} other {# extrações}}"
 msgid "{scaleName} disconnected"
 msgstr "{scaleName} desconectada"
 
+#: src/pages/Settings/PatchNotes.jsx
+msgid "{total, plural, one {# commit} other {# commits}}"
+msgstr ""
+
 #: src/pages/ShotHistory/index.jsx
 msgid "{totalFilteredItems, plural, one {Delete # shot} other {Delete # shots}}"
 msgstr "{totalFilteredItems, plural, one {Excluir # extração} other {Excluir # extrações}}"
@@ -331,6 +335,10 @@ msgstr "Todos os painéis disponíveis estão visíveis."
 msgid "All Metrics"
 msgstr "Todas as métricas"
 
+#: src/pages/Settings/PatchNotes.jsx
+msgid "All nightly changes"
+msgstr ""
+
 #: src/pages/ShotHistory/index.jsx
 msgid "All Shots"
 msgstr "Todas as extrações"
@@ -338,6 +346,10 @@ msgstr "Todas as extrações"
 #: src/pages/Settings/tabs/MachineTab.jsx
 msgid "Alt Relay / SSR2 Function"
 msgstr "Função do relé alternativo / SSR2"
+
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Analog"
+msgstr ""
 
 #: src/components/PumpFlowCalibration/usePumpFlowCalibration.js
 msgid "Analysis complete."
@@ -572,6 +584,11 @@ msgstr "Retrolavagem"
 #: src/utils/warnings.js
 msgid "Backflush due"
 msgstr "Retrolavagem pendente"
+
+#. placeholder {0}: formData.standbyImageDim ?? STANDBY_DEFAULTS.standbyImageDim
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Background dimming: {0}%"
+msgstr ""
 
 #: src/pages/ShotAnalyzer/components/shotDetails/ShotDetailsCard.jsx
 msgid "Balance / Taste"
@@ -866,9 +883,14 @@ msgstr "Clique para confirmar a exclusão"
 msgid "Click to open the library. Use Import below or drop files here to import."
 msgstr "Clique para abrir a biblioteca. Use Importar abaixo ou solte arquivos aqui para importar."
 
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Clock"
+msgstr ""
+
 #: src/app/MachineSetup.jsx
 #: src/components/VisualizerUploadModal.jsx
 #: src/pages/Home/BrewConfirmModal.jsx
+#: src/pages/Settings/PatchNotes.jsx
 #: src/pages/ShotHistory/ConfirmDeleteModal.jsx
 msgid "Close"
 msgstr "Fechar"
@@ -1123,21 +1145,36 @@ msgstr "Não foi possível gerar uma imagem."
 msgid "Could not import {importName}: {importMessage}"
 msgstr "Não foi possível importar {importName}: {importMessage}"
 
+#: src/pages/Settings/PatchNotes.jsx
+msgid "Could not load release notes"
+msgstr ""
+
 #: src/pages/ProfileEdit/ProfileImageUpload.jsx
 msgid "Could not load the saved profile."
 msgstr "Não foi possível carregar o perfil salvo."
 
 #: src/pages/ProfileEdit/ProfileImageUpload.jsx
+#: src/pages/Settings/StandbyScreenSettings.jsx
+#: src/utils/standbyImage.js
 msgid "Could not read this image."
 msgstr "Não foi possível ler esta imagem."
 
 #: src/utils/profileImage.js
+#: src/utils/standbyImage.js
 msgid "Could not remove image"
 msgstr "Não foi possível remover a imagem"
+
+#: src/utils/standbyImage.js
+msgid "Could not remove logo"
+msgstr ""
 
 #: src/components/PumpFlowCalibration/usePumpFlowCalibration.js
 msgid "Could not restore previous profile: {message}"
 msgstr "Não foi possível restaurar o perfil anterior: {message}"
+
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Could not restore the default standby screen."
+msgstr ""
 
 #: src/pages/Settings/tabs/BluetoothTab.jsx
 msgid "Couldn't connect to {errorAddress}"
@@ -1214,6 +1251,10 @@ msgstr "Atualmente volumétrico"
 msgid "Custom"
 msgstr "Personalizado"
 
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Custom logo"
+msgstr ""
+
 #: src/components/MachineProfileControl.jsx
 msgid "Custom machine"
 msgstr "Máquina personalizada"
@@ -1244,6 +1285,10 @@ msgstr "Escuro"
 #: src/pages/Settings/tabs/GeneralTab.jsx
 msgid "Dark Theme"
 msgstr "Tema escuro"
+
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Darkens the image (or lightens it in the light theme) so the clock stays readable."
+msgstr ""
 
 #: src/components/Navigation.jsx
 msgid "Dashboard"
@@ -1467,6 +1512,10 @@ msgstr "Descrição"
 msgid "Deselect {itemName}"
 msgstr "Desmarcar {itemName}"
 
+#: src/pages/Settings/PatchNotes.jsx
+msgid "Details"
+msgstr ""
+
 #: src/pages/SetupWizard/MachineStep.jsx
 msgid "Detected board"
 msgstr "Placa detectada"
@@ -1480,6 +1529,10 @@ msgstr "Configurações do dispositivo"
 #: src/pages/ShotAnalyzer/components/shotChart/tooltip/tooltipModel.js
 msgid "Difference"
 msgstr "Diferença"
+
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Digital (default)"
+msgstr ""
 
 #: src/pages/ShotAnalyzer/components/analyzerActionBar/ActionBarButtons.jsx
 msgid "Disable compare mode"
@@ -2154,6 +2207,10 @@ msgstr "Completo"
 msgid "Further Resources"
 msgstr "Mais recursos"
 
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "GaggiMate (default)"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/components/EmptyState.jsx
 msgid "GaggiMate (GM)"
 msgstr "GaggiMate (GM)"
@@ -2215,6 +2272,7 @@ msgid "Generate draws a picture from the saved profile."
 msgstr "“Gerar” cria uma imagem a partir do perfil salvo."
 
 #: src/pages/ProfileEdit/ProfileImageUpload.jsx
+#: src/pages/Settings/StandbyScreenSettings.jsx
 msgid "GIF images are not supported. Please use PNG, JPEG, WebP or BMP."
 msgstr "Imagens GIF não são compatíveis. Use PNG, JPEG, WebP ou BMP."
 
@@ -2328,6 +2386,10 @@ msgstr "Parâmetros de aquecimento"
 #: src/pages/SetupWizard/TestStep.jsx
 msgid "Heating test"
 msgstr "Teste de aquecimento"
+
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Hidden"
+msgstr ""
 
 #: src/components/SettingsFormField.jsx
 msgid "Hidden / Available"
@@ -2583,6 +2645,10 @@ msgstr "Cozinha"
 msgid "Language"
 msgstr "Idioma"
 
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Large digital"
+msgstr ""
+
 #: src/pages/Settings/tabs/MachineTab.jsx
 msgid "Larger alpha responds faster with less smoothing; smaller alpha is smoother but slower."
 msgstr "Um alfa maior responde mais rápido, com menos suavização; um alfa menor é mais suave, porém mais lento."
@@ -2653,6 +2719,10 @@ msgstr "falha na conexão em tempo real ({reason})"
 msgid "Live Metrics"
 msgstr "Métricas em tempo real"
 
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Live preview · Save to apply"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/components/analyzerActionBar/ActionBarButtons.jsx
 msgid "Load a profile to open statistics"
 msgstr "Carregue um perfil para abrir as estatísticas"
@@ -2708,6 +2778,10 @@ msgstr "Armazenamento local do navegador (WEB)"
 #: src/pages/Statistics/components/StatisticsSearchHelp.jsx
 msgid "Local browser time is used."
 msgstr "É usado o horário local do navegador."
+
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Logo"
+msgstr ""
 
 #: src/pages/ShotHistory/index.jsx
 msgid "Longest Duration"
@@ -3154,6 +3228,10 @@ msgstr "Nenhum item encontrado."
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
 msgid "No more types available"
 msgstr "Não há mais tipos disponíveis"
+
+#: src/pages/Settings/PatchNotes.jsx
+msgid "No new commits since the installed version"
+msgstr ""
 
 #: src/pages/ShotHistory/ShotNotesCard.jsx
 msgid "No notes added"
@@ -3636,9 +3714,17 @@ msgstr "Tire o GaggiMate do standby para usar balanças Bluetooth."
 msgid "Plugins"
 msgstr "Plugins"
 
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "PNG or SVG with a transparent background works best; a plain background is removed automatically. Empty edges are trimmed and the logo is fitted into 400×160 pixels. Tinted logos are drawn in the theme's text colour like the stock logo; turn it off to keep the logo's own colours (re-upload the file to get them back after tinting)."
+msgstr ""
+
 #: src/pages/ProfileEdit/ProfileImageUpload.jsx
 msgid "PNG, JPEG, WebP or BMP. GIFs are not supported. The image is cropped to a square and scaled to 300×300 pixels for the display."
 msgstr "PNG, JPEG, WebP ou BMP. GIFs não são compatíveis. A imagem é cortada em formato quadrado e redimensionada para 300×300 pixels para a tela."
+
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "PNG, JPEG, WebP or BMP. The image is cropped to a square, scaled to 480×480 pixels and stored on the display. It changes right away."
+msgstr ""
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
 #: src/pages/ProfileEdit/StandardProfileForm.jsx
@@ -3799,6 +3885,10 @@ msgstr "Alvo de pressão"
 #: src/pages/SetupWizard/TestStep.jsx
 msgid "Pressure test"
 msgstr "Teste de pressão"
+
+#: src/pages/Settings/StandbyPreview.jsx
+msgid "Preview of the standby screen"
+msgstr ""
 
 #: src/pages/ProfileEdit/ExtendedProfileForm.jsx
 #: src/pages/ShotHistory/index.jsx
@@ -4216,6 +4306,10 @@ msgstr "Extração de referência"
 msgid "Relative time: <0>h</0> (now), <1>h-7d</1> (7 days ago)"
 msgstr "Tempo relativo: <0>h</0> (agora), <1>h-7d</1> (há 7 dias)"
 
+#: src/pages/Settings/PatchNotes.jsx
+msgid "Release notes"
+msgstr ""
+
 #: src/components/MachineProfileControl.jsx
 msgid "Reload updated profile"
 msgstr "Recarregar perfil atualizado"
@@ -4226,6 +4320,7 @@ msgstr "Lembrar credenciais"
 
 #: src/app/MachineSetup.jsx
 #: src/pages/ProfileEdit/ProfileImageUpload.jsx
+#: src/pages/Settings/StandbyScreenSettings.jsx
 msgid "Remove"
 msgstr "Remover"
 
@@ -4273,9 +4368,17 @@ msgstr "Renomear {name}"
 msgid "Rendering PNG export..."
 msgstr "Renderizando exportação em PNG..."
 
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Replace background"
+msgstr ""
+
 #: src/pages/ProfileEdit/ProfileImageUpload.jsx
 msgid "Replace image"
 msgstr "Substituir imagem"
+
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Replace logo"
+msgstr ""
 
 #: src/pages/SetupWizard/MachineStep.jsx
 msgid "Replace these machine settings?"
@@ -4351,6 +4454,10 @@ msgstr "Restaurar padrões"
 #: src/pages/SetupWizard/index.jsx
 msgid "Restart"
 msgstr "Reiniciar"
+
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Restore default standby screen"
+msgstr ""
 
 #: src/components/MachineProfileControl.jsx
 msgid "Restore profile defaults"
@@ -4943,6 +5050,10 @@ msgstr "Mostrar"
 msgid "Show all {labelLower}"
 msgstr "Mostrar tudo: {labelLower}"
 
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Show boiler temperature"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/components/shotChart/controls/compareControls.jsx
 msgid "Show compare annotations"
 msgstr "Mostrar anotações da comparação"
@@ -4963,6 +5074,10 @@ msgstr "Mostrar detalhes de {label}"
 #: src/pages/ShotAnalyzer/components/shotChart/single/SingleShotChart.jsx
 msgid "Show legend"
 msgstr "Mostrar legenda"
+
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Show logo"
+msgstr ""
 
 #: src/pages/ShotAnalyzer/components/shotChart/MobileMetricPager.jsx
 msgid "Show metric page {pageNumber}"
@@ -4987,6 +5102,11 @@ msgstr "Mostrar extrações recentes"
 #: src/pages/DashboardSettings/index.jsx
 msgid "Show the control column panels as separate cards, or group them into a single unified card."
 msgstr "Mostra os painéis da coluna de controle como cartões separados ou os agrupa em um único cartão."
+
+#. placeholder {0}: commits.length
+#: src/pages/Settings/PatchNotes.jsx
+msgid "showing the newest {0}"
+msgstr ""
 
 #: src/pages/Statistics/components/StatisticsShotCompareSection.jsx
 msgid "Showing up to 100 latest shots. Refine with filters."
@@ -5017,6 +5137,10 @@ msgstr "Perfil simples"
 #: src/pages/ProfileEdit/ProfileTypeSelection.jsx
 msgid "Simple Profile"
 msgstr "Perfil simples"
+
+#: src/pages/Settings/PatchNotes.jsx
+msgid "Since the last update"
+msgstr ""
 
 #: src/pages/SetupWizard/MachineStep.jsx
 msgid "Single boiler"
@@ -5096,6 +5220,7 @@ msgid "Space evenly"
 msgstr "Espaçar uniformemente"
 
 #: src/app/AppSettings.jsx
+#: src/pages/Settings/PatchNotes.jsx
 #: src/pages/Settings/tabs/SystemTab.jsx
 msgctxt "update channel"
 msgid "Stable"
@@ -5120,6 +5245,10 @@ msgstr "Brilho em standby (0-16)"
 #: src/pages/Settings/tabs/GeneralTab.jsx
 msgid "Standby Brightness Timeout"
 msgstr "Tempo até o brilho de standby"
+
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Standby Screen"
+msgstr ""
 
 #: src/pages/Settings/tabs/GeneralTab.jsx
 msgid "Standby Timeout"
@@ -5712,6 +5841,10 @@ msgstr "O arquivo não contém nenhuma configuração conhecida."
 msgid "The file does not contain a settings object."
 msgstr "O arquivo não contém um objeto de configurações."
 
+#: src/pages/Settings/PatchNotes.jsx
+msgid "The firmware version is not known yet"
+msgstr ""
+
 #: src/pages/Home/BrewConfirmModal.jsx
 msgid "The following warnings are currently active:"
 msgstr "Os seguintes avisos estão ativos no momento:"
@@ -5723,6 +5856,10 @@ msgstr "O moedor acessa o GaggiMate neste endereço, portanto os dois precisam e
 #: src/pages/SetupWizard/TestStep.jsx
 msgid "The heater runs at full power for up to 10 seconds. The test passes as soon as the boiler temperature has risen by a few degrees, which can take up to 30 more seconds on a larger boiler."
 msgstr "O aquecedor funciona em potência máxima por até 10 segundos. O teste é aprovado assim que a temperatura da caldeira sobe alguns graus, o que pode levar até 30 segundos a mais em uma caldeira maior."
+
+#: src/utils/standbyImage.js
+msgid "The logo is empty or fully transparent."
+msgstr ""
 
 #: src/app/appSettings.js
 msgid "The machine has been in steam mode for 5 minutes."
@@ -5876,6 +6013,10 @@ msgstr "tempo esgotado"
 #: src/components/PumpFlowCalibration/usePumpFlowCalibration.js
 msgid "Timeout waiting for shot to finish (5min)."
 msgstr "Tempo esgotado aguardando o fim da extração (5 min)."
+
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Tint to theme colour"
+msgstr ""
 
 #: src/pages/ProfileEdit/ProfileMainInformation.jsx
 msgid "Title"
@@ -6066,8 +6207,13 @@ msgid "Unsupported date expression. Use DD.MM.YYYY, optional HH:MM, or h-7d."
 msgstr "Expressão de data não compatível. Use DD.MM.YYYY, HH:MM opcional ou h-7d."
 
 #: src/pages/ProfileEdit/ProfileImageUpload.jsx
+#: src/pages/Settings/StandbyScreenSettings.jsx
 msgid "Unsupported file type. Please use PNG, JPEG, WebP or BMP."
 msgstr "Tipo de arquivo não compatível. Use PNG, JPEG, WebP ou BMP."
+
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Unsupported file type. Please use PNG, SVG, JPEG, WebP or BMP."
+msgstr ""
 
 #: src/pages/ShotAnalyzer/services/analyzer/delayTracking.js
 msgid "Unusually high inferred delay in Phase {phaseNumber} ({delayMs} ms)."
@@ -6134,7 +6280,12 @@ msgctxt "date basis"
 msgid "Upload"
 msgstr "Envio"
 
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Upload background"
+msgstr ""
+
 #: src/utils/profileImage.js
+#: src/utils/standbyImage.js
 msgid "Upload failed"
 msgstr "Falha no envio"
 
@@ -6145,6 +6296,10 @@ msgstr "Falha no envio: {errorMessage}"
 #: src/pages/ProfileEdit/ProfileImageUpload.jsx
 msgid "Upload image"
 msgstr "Enviar imagem"
+
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Upload logo"
+msgstr ""
 
 #: src/components/VisualizerUploadModal.jsx
 msgid "Upload Shot"
@@ -6182,6 +6337,10 @@ msgstr "Use um ID diferente para um perfil integrado personalizado."
 #: src/pages/Settings/tabs/MachineTab.jsx
 msgid "Use Alba reservoir level to interlock steam refill"
 msgstr "Usar o nível do reservatório do Alba para bloquear o reabastecimento de vapor"
+
+#: src/pages/Settings/StandbyScreenSettings.jsx
+msgid "Use default logo"
+msgstr ""
 
 #: src/pages/Statistics/components/toolbar/helpers.js
 msgid "Use shot timestamp only"
@@ -6281,6 +6440,10 @@ msgstr "Ver"
 msgctxt "import mode badge"
 msgid "VIEW"
 msgstr "VER"
+
+#: src/pages/Settings/PatchNotes.jsx
+msgid "View on GitHub"
+msgstr ""
 
 #: src/pages/ProfileList/index.jsx
 msgid "View statistics for {label} profile"

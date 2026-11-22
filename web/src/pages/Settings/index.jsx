@@ -83,6 +83,8 @@ const READ_ONLY_KEYS = [
   'machineProfileCapabilities',
   'machineHardwareConfiguration',
   'machineProfileSupportedFields',
+  'standbyImageRev',
+  'standbyLogoRev',
 ];
 
 // Form-only fields that never come back from GET /api/settings.
@@ -303,6 +305,9 @@ export function Settings() {
   useEffect(() => {
     setCurrentTheme(getStoredTheme());
   }, []);
+
+  // Merges fields that were already saved on the machine (e.g. the standby screen restore).
+  const updateFormFields = useCallback(fields => setFormData(prev => ({ ...prev, ...fields })), []);
 
   const onChange = key => {
     return e => {
@@ -637,6 +642,7 @@ export function Settings() {
             <GeneralTab
               formData={formData}
               onChange={onChange}
+              updateFormFields={updateFormFields}
               profiles={profiles}
               currentTheme={currentTheme}
               setCurrentTheme={setCurrentTheme}

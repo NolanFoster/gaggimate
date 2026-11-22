@@ -367,6 +367,22 @@ void Settings::setStandbyBrightnessTimeout(int standby_brightness_timeout) {
     standbyBrightnessTimeout.set(standby_brightness_timeout);
 }
 
+void Settings::setStandbyClockStyle(int style) {
+    standbyClockStyle.set(style >= STANDBY_CLOCK_DIGITAL && style <= STANDBY_CLOCK_HIDDEN ? style : STANDBY_CLOCK_DIGITAL);
+}
+
+void Settings::setStandbyShowLogo(bool show) { standbyShowLogo.set(show); }
+
+void Settings::setStandbyShowTemp(bool show) { standbyShowTemp.set(show); }
+
+void Settings::setStandbyImageDim(int percent) {
+    standbyImageDim.set(percent < 0 ? 0 : percent > STANDBY_IMAGE_DIM_MAX ? STANDBY_IMAGE_DIM_MAX : percent);
+}
+
+void Settings::bumpStandbyLogoRev() { standbyLogoRev.set(standbyLogoRev.get() + 1); }
+
+void Settings::bumpStandbyImageRev() { standbyImageRev.set(standbyImageRev.get() + 1); }
+
 void Settings::setWifiApTimeout(int timeout) { wifiApTimeout.set(timeout); }
 
 void Settings::setSteamPumpPercentage(float steam_pump_percentage) { steamPumpPercentage.set(steam_pump_percentage); }

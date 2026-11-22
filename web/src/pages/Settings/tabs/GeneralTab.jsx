@@ -12,6 +12,7 @@ import { LanguageSelect } from '../../../components/LanguageSelect.jsx';
 import { machine } from '../../../services/ApiService.js';
 import { WarningIcon } from '../../../components/WarningIcon.jsx';
 import { WARNING_LEVELS, WARNINGS } from '../../../utils/warnings.js';
+import { StandbyScreenSettings } from '../StandbyScreenSettings.jsx';
 import {
   InputGroupField,
   SettingsFormField,
@@ -84,6 +85,7 @@ function PasswordField({ id, label, placeholder, value, onChange, shown, setShow
 export function GeneralTab({
   formData,
   onChange,
+  updateFormFields,
   profiles,
   currentTheme,
   setCurrentTheme,
@@ -266,11 +268,13 @@ export function GeneralTab({
                 id='themeMode'
                 name='themeMode'
                 className='select select-bordered w-full'
-                value={formData.themeMode}
+                value={String(formData.themeMode ?? 0)}
                 onChange={onChange('themeMode')}
               >
-                <option value={0}>{t`Dark Theme`}</option>
-                <option value={1}>{t`Light Theme`}</option>
+                {/* String values: numeric ones differ from the DOM's string, so Preact rewrote them on every
+                    re-render (the tab re-renders on live status updates), resetting an open dropdown. */}
+                <option value='0'>{t`Dark Theme`}</option>
+                <option value='1'>{t`Light Theme`}</option>
               </select>
             </SettingsFormField>
             {pressureAvailable.value && (
@@ -284,11 +288,11 @@ export function GeneralTab({
                   id='statusDisplayMode'
                   name='statusDisplayMode'
                   className='select select-bordered w-full'
-                  value={formData.statusDisplayMode ?? 0}
+                  value={String(formData.statusDisplayMode ?? 0)}
                   onChange={onChange('statusDisplayMode')}
                 >
-                  <option value={0}>{t`Progress Bar`}</option>
-                  <option value={1}>{t`Shot Chart`}</option>
+                  <option value='0'>{t`Progress Bar`}</option>
+                  <option value='1'>{t`Shot Chart`}</option>
                 </select>
               </SettingsFormField>
             )}
@@ -343,6 +347,12 @@ export function GeneralTab({
               </InputGroupField>
             </div>
           </div>
+
+          <StandbyScreenSettings
+            formData={formData}
+            onChange={onChange}
+            updateFormFields={updateFormFields}
+          />
         </Section>
       )}
 

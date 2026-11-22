@@ -30,6 +30,9 @@ constexpr char OTA_DISPLAY_FILESYSTEM[] = "display-filesystem.bin";
 class ProfileManager;
 class MachineProfileStore;
 
+// Files behind /api/standby/image and /api/standby/logo.
+enum class StandbyAsset : uint8_t { Image = 0, Logo = 1 };
+
 class WebUIPlugin : public Plugin {
   public:
     WebUIPlugin();
@@ -65,6 +68,10 @@ class WebUIPlugin : public Plugin {
     // Profile images on the SD card (pre-converted 300x300 RGB565 from the web UI)
     void handleProfileImage(AsyncWebServerRequest *request);
     void handleProfileImageBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+    void handleStandbyAsset(AsyncWebServerRequest *request, StandbyAsset asset);
+    void handleStandbyAssetBody(AsyncWebServerRequest *request, StandbyAsset asset, uint8_t *data, size_t len, size_t index,
+                                size_t total);
+    void onStandbyAssetChanged(StandbyAsset asset);
 
     GitHubOTA *ota = nullptr;
     AsyncWebServer server;
@@ -87,6 +94,12 @@ class WebUIPlugin : public Plugin {
     AsyncWebServerRequest *imageUploadRequest = nullptr;
     File imageUploadFile;
     String imageUploadError;
+    struct StandbyUpload {
+        AsyncWebServerRequest *request = nullptr;
+        File file;
+        String error;
+    };
+    StandbyUpload standbyUploads[2]; // indexed by StandbyAsset
 };
 
 #endif // WEBUIPLUGIN_H

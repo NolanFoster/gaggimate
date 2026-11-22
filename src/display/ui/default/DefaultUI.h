@@ -8,6 +8,7 @@
 #include <display/drivers/Driver.h>
 #include <display/models/profile.h>
 #include <display/ui/default/eez/screens.h>
+#include <display/ui/default/StandbyCustomizer.h>
 #include <display/ui/default/eez/structs.h>
 #include <mutex>
 
@@ -190,6 +191,7 @@ class DefaultUI {
 
     Driver *panelDriver = nullptr;
     Controller *controller;
+    StandbyCustomizer standbyCustomizer{controller}; // after controller: initialized from it
     PluginManager *pluginManager;
     ProfileManager *profileManager;
 

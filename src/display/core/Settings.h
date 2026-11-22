@@ -25,6 +25,10 @@ constexpr char PREFERENCES_KEY[] = "controller";
 // Per-warning severity: hidden, shown as a warning, or shown as an error that needs confirmation before brewing.
 enum WarningLevel { WARNING_LEVEL_IGNORE = 0, WARNING_LEVEL_WARN = 1, WARNING_LEVEL_ERROR = 2 };
 enum StatusDisplayMode { STATUS_DISPLAY_PROGRESS = 0, STATUS_DISPLAY_CHART = 1 };
+// Standby screen clock. Digital is the stock look; the others are drawn by StandbyCustomizer.
+constexpr int STANDBY_IMAGE_DIM_DEFAULT = 35; // percent the background is tinted toward the theme background
+constexpr int STANDBY_IMAGE_DIM_MAX = 80;
+enum StandbyClockStyle { STANDBY_CLOCK_DIGITAL = 0, STANDBY_CLOCK_LARGE = 1, STANDBY_CLOCK_ANALOG = 2, STANDBY_CLOCK_HIDDEN = 3 };
 
 struct AutoWakeupSchedule {
     String time;    // HH:MM format
@@ -317,6 +321,12 @@ class Settings {
     int getMainBrightness() const { return mainBrightness.get(); }
     int getStandbyBrightness() const { return standbyBrightness.get(); }
     int getStandbyBrightnessTimeout() const { return standbyBrightnessTimeout.get(); }
+    int getStandbyClockStyle() const { return standbyClockStyle.get(); }
+    bool isStandbyShowLogo() const { return standbyShowLogo.get(); }
+    bool isStandbyShowTemp() const { return standbyShowTemp.get(); }
+    int getStandbyImageRev() const { return standbyImageRev.get(); }
+    int getStandbyImageDim() const { return standbyImageDim.get(); } // percent, 0-80
+    int getStandbyLogoRev() const { return standbyLogoRev.get(); }
     int getWarnWaterLevel() const { return warnWaterLevel.get(); }
     int getWarnFlush() const { return warnFlush.get(); }
     int getWarnSteamSwitch() const { return warnSteamSwitch.get(); }
@@ -452,6 +462,12 @@ class Settings {
     void setMainBrightness(int main_brightness);
     void setStandbyBrightness(int standby_brightness);
     void setStandbyBrightnessTimeout(int standby_brightness_timeout);
+    void setStandbyClockStyle(int style);
+    void setStandbyShowLogo(bool show);
+    void setStandbyShowTemp(bool show);
+    void bumpStandbyImageRev();
+    void setStandbyImageDim(int percent);
+    void bumpStandbyLogoRev();
     void setWifiApTimeout(int timeout);
     void setSteamPumpPercentage(float steam_pump_percentage);
     void setSteamPumpCutoff(float steam_pump_cutoff);
@@ -594,6 +610,12 @@ class Settings {
     Property<int> mainBrightness{registry, "main_b", 16};
     Property<int> standbyBrightness{registry, "standby_b", 8};
     Property<int> standbyBrightnessTimeout{registry, "standby_bt", 60000}; // 60 seconds default
+    Property<int> standbyClockStyle{registry, "sb_clk", STANDBY_CLOCK_DIGITAL};
+    Property<bool> standbyShowLogo{registry, "sb_logo", true};
+    Property<bool> standbyShowTemp{registry, "sb_tmp", false};
+    Property<int> standbyImageRev{registry, "sb_img", 0}; // bumped on every background upload/removal
+    Property<int> standbyImageDim{registry, "sb_dim", STANDBY_IMAGE_DIM_DEFAULT};
+    Property<int> standbyLogoRev{registry, "sb_lgo", 0}; // bumped on every custom logo upload/removal
     Property<int> wifiApTimeout{registry, "wifi_apt", DEFAULT_WIFI_AP_TIMEOUT_MS};
     Property<int> themeMode{registry, "theme", 0};
     Property<int> statusDisplayMode{registry, "sdm", STATUS_DISPLAY_PROGRESS};
